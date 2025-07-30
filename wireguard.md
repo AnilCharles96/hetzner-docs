@@ -85,7 +85,7 @@ PrivateKey = <SERVER_PRIVATE_KEY>
 
 
 [Peer]
-PublicKey = <CLIENT_PUBLIC_KEY> # ref: Get public key 
+PublicKey = <CLIENT_PUBLIC_KEY> 
 AllowedIPs = 10.2.2.2/32
 Endpoint = 49.12.120.60:57551
 ```
