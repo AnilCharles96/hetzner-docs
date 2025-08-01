@@ -146,3 +146,96 @@ spec:
         - name: sentry-web
           port: 9000
 ```
+
+# Deployment
+
+
+```
+helm repo add sentry https://sentry-kubernetes.github.io/charts
+helm repo update
+```
+
+```
+helm upgrade --install sentry sentry/sentry -n sentry --timeout 20m -f sentry.yml
+```
+
+### `values.yaml`
+```
+postgresql:
+  primary:
+    persistence:
+      enabled: true
+      storageClass: local-path
+      size: 20Gi
+  auth:
+    postgresPassword: sentry
+    username: sentry
+    password: sentry
+
+asHook: true
+
+hooks:
+  enabled: true
+  dbInit:
+    enabled: true
+
+redis:
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 16Gi
+
+kafka:
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 8Gi
+
+zookeeper:
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 8Gi
+
+clickhouse:
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 30Gi
+
+snuba:
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 10Gi
+
+
+kafka:
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 10Gi
+
+
+web:
+  env:
+    SENTRY_SYSTEM_URL_PREFIX: "https://sentry.example.com"
+    CSRF_TRUSTED_ORIGINS: "https://sentry.example.com"
+    SENTRY_SYSTEM_INTERNAL_URL_PREFIX: "http://sentry-web.sentry.svc.cluster.local:9000"
+    SECURE_PROXY_SSL_HEADER: "HTTP_X_FORWARDED_PROTO,https"
+
+system:
+  url: "https://sentry.example.com"
+  adminEmail: "a@a.com"
+  public: true
+
+
+ingress:
+  enabled: false
+
+
+config:
+  sentry.conf.py: |
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    USE_X_FORWARDED_HOST = True
+    CSRF_TRUSTED_ORIGINS = ['https://sentry.example.com']
