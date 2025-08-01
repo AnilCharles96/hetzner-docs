@@ -92,7 +92,6 @@ spec:
         namespaces:
           from: All
 
-```
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: HTTPRoute
 metadata:
