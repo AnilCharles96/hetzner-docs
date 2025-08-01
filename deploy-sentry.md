@@ -156,7 +156,7 @@ helm repo update
 ```
 
 ```
-helm upgrade --install sentry sentry/sentry -n sentry --timeout 20m -f sentry.yml
+helm upgrade --install sentry sentry/sentry -n sentry --timeout 20m -f values.yml
 ```
 
 ### `values.yaml`
