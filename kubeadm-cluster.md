@@ -34,6 +34,7 @@ install -m 755 runc.amd64 /usr/local/sbin/runc
 ### Containerd systemd service
 
 ```
+mkdir -p /usr/local/lib/systemd/system/
 
 nano /usr/local/lib/systemd/system/containerd.service
 
@@ -42,21 +43,6 @@ nano /usr/local/lib/systemd/system/containerd.service
 ### Copy below to above
 
 ```
-
-# Copyright The containerd Authors.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 [Unit]
 Description=containerd container runtime
 Documentation=https://containerd.io
@@ -120,6 +106,12 @@ sudo systemctl enable --now kubelet
 
 ```
 
+### Failed to create pod sandbox: open /run/systemd/resolve/resolv.conf: no such file or directory
+```
+mkdir -p /run/systemd/resolve
+touch /run/systemd/resolve/resolv.conf
+```
+
 ###  error: open /var/lib/kubelet/config.yaml: no such file or directory
 ```
 kubeadm init phase kubelet-start
@@ -130,6 +122,18 @@ kubeadm init phase kubelet-start
 ```
 sudo kubeadm reset -f
 ```
+
+### Kubeadm reset -f freezes
+```
+sudo rm -rf /etc/kubernetes/
+sudo rm -rf /var/lib/etcd/
+sudo rm -rf /var/lib/kubelet/
+sudo rm -rf /var/lib/cni/
+sudo rm -rf /etc/cni/
+sudo rm -rf /opt/cni/
+sudo rm -rf /var/run/kubernetes/
+sudo rm -rf ~/.kube/
+````
 
 ###  \"runc\": executable file not found in $PATH"
 
@@ -297,4 +301,22 @@ kubeadm join 10.0.0.102:6443 --token x75ew3.vbcnmebtomupifc3 --control-plane --n
 kubeadm join 10.0.0.102:6443 --token x75ew3.vbcnmebtomupifc3 \
 	--discovery-token-ca-cert-hash sha256:270476e050fed5d59d0758587e0017ad7678a0c7722f3449aa9e8517ab78b812 --node-name worker-1
 
+```
+
+
+# Local path provisioner for pvc
+```
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-path
+provisioner: rancher.io/local-path
+volumeBindingMode: Immediate
+
+
+
+kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+
+
+kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 ```

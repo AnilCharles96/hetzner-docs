@@ -52,7 +52,7 @@ DNS = 1.1.1.1
 [Peer]
 PublicKey = <SERVER_PUBLIC_KEY> # we get this from running the above command wg in server
 Endpoint =  <SERVER_PUBLIC_IP>:51820  
-AllowedIPs = 10.2.2.0/24,10.0.0.100/32  # 10.0.0.100 is where controlplane-1 is running         
+AllowedIPs = 10.2.2.0/24,10.0.0.100/24          
 PersistentKeepalive = 25
 ````
 
